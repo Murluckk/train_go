@@ -67,7 +67,8 @@ sed -i "s|^Environment=PATH=.*|Environment=PATH=$(dirname "$GO_BIN"):/usr/local/
     /etc/systemd/system/drill.service
 
 systemctl daemon-reload
-systemctl enable --now "$SERVICE"
+systemctl enable "$SERVICE"
+systemctl restart "$SERVICE"
 
 log "waiting for the service to come up"
 for _ in $(seq 1 60); do
