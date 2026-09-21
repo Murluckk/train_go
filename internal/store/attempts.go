@@ -346,3 +346,12 @@ func reviewOf(ctx context.Context, q querier, taskID string) (Review, error) {
 	r.Exists = true
 	return r, nil
 }
+
+// AbandonOpen closes whatever attempt is open for a task, if any. It is what
+// "start over" does before a fresh attempt is created.
+func (s *Store) AbandonOpen(ctx context.Context, taskID string) error {
+	_, err := s.db.ExecContext(ctx,
+		`UPDATE attempts SET status = 'abandoned', finished_at = ? WHERE task_id = ? AND status = 'in_progress'`,
+		formatTime(s.now()), taskID)
+	return err
+}
