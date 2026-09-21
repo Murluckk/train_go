@@ -1,0 +1,75 @@
+# systemd unit for drill.
+#
+# Bound to loopback on purpose. drill has no authentication and compiles and
+# executes whatever code is POSTed to it - that is what it is for. Reachable
+# from the network it is a remote code execution hole, so it listens on
+# 127.0.0.1 and you reach it through an SSH tunnel:
+#
+#   ssh -N -L 8080:127.0.0.1:8080 drill@<server>
+#
+# Then open http://127.0.0.1:8080 on your own machine.
+
+[Unit]
+Description=drill - local Go practice trainer
+Documentation=https://github.com/Murluckk/train_go
+After=network.target
+
+[Service]
+Type=exec
+User=drill
+Group=drill
+WorkingDirectory=/opt/drill
+
+ExecStart=/opt/drill/drill \
+    -addr 127.0.0.1:8080 \
+    -tasks /opt/drill/tasks \
+    -db /var/lib/drill/drill.db \
+    -cache /var/cache/drill/gocache \
+    -log-format json
+
+# The go toolchain must be on PATH: the runner shells out to it for every
+# submission.
+Environment=PATH=/usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+Environment=HOME=/var/lib/drill
+
+Restart=on-failure
+RestartSec=5s
+# SIGINT, because that is what the graceful shutdown path listens for
+# alongside SIGTERM; either works.
+KillSignal=SIGTERM
+TimeoutStopSec=30s
+
+StateDirectory=drill
+StateDirectoryMode=0750
+CacheDirectory=drill
+CacheDirectoryMode=0750
+
+# Hardening. Deliberately not stricter than this: the whole job of the
+# service is to compile and execute code, so it needs a writable temp
+# directory it can exec from and the right to fork processes.
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+RestrictSUIDSGID=yes
+RestrictRealtime=yes
+LockPersonality=yes
+RemoveIPC=yes
+# Only loopback is needed; AF_UNIX stays for the runtime itself.
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+ReadWritePaths=/var/lib/drill /var/cache/drill
+# Tasks are read only at runtime: you edit them over ssh, the service only
+# reads them.
+ReadOnlyPaths=/opt/drill
+
+LimitNPROC=512
+LimitNOFILE=4096
+
+[Install]
+WantedBy=multi-user.target
