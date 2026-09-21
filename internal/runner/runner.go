@@ -111,11 +111,22 @@ func New(cfg Config) (*Runner, error) {
 // toolchain switch, which needs the network and fails with GOPROXY=off.
 func (r *Runner) GoVersion() string { return r.goVersion }
 
+// detectGoVersion asks the toolchain what language version it implements.
+//
+// Both the probe and the sandbox run with GOTOOLCHAIN=local and outside any
+// module, so the answer is the version the go binary can serve on its own.
+// Probing inside a module whose go.mod names a newer version would switch
+// toolchains and report that newer version instead - and then every sandbox
+// would be built with a go.mod its own toolchain refuses to load.
 func detectGoVersion(goBin string) (string, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 
-	out, err := exec.CommandContext(ctx, goBin, "env", "GOVERSION").Output()
+	cmd := exec.CommandContext(ctx, goBin, "env", "GOVERSION")
+	cmd.Dir = os.TempDir()
+	cmd.Env = append(os.Environ(), "GOTOOLCHAIN=local", "GOWORK=off")
+
+	out, err := cmd.Output()
 	if err != nil {
 		return "", fmt.Errorf("read GOVERSION from %s: %w", goBin, err)
 	}

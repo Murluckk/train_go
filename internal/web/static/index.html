@@ -1,1 +1,55 @@
-<!doctype html><title>drill</title>
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>drill</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='14'>⌨</text></svg>">
+<link rel="stylesheet" href="/app.css">
+<!--
+  Import map, not a bundler. Every CodeMirror package is pinned once, so the
+  browser loads exactly one copy of @codemirror/state and friends - two copies
+  is the classic way a hand-assembled CodeMirror build breaks.
+
+  @codemirror/autocomplete is deliberately absent. Completion is not switched
+  off by configuration here; it is simply never loaded.
+-->
+<script type="importmap">
+{
+  "imports": {
+    "@codemirror/state": "https://cdn.jsdelivr.net/npm/@codemirror/state@6.7.5/dist/index.js",
+    "@codemirror/view": "https://cdn.jsdelivr.net/npm/@codemirror/view@6.43.12/dist/index.js",
+    "@codemirror/language": "https://cdn.jsdelivr.net/npm/@codemirror/language@6.12.4/dist/index.js",
+    "@codemirror/commands": "https://cdn.jsdelivr.net/npm/@codemirror/commands@6.11.1/dist/index.js",
+    "@codemirror/search": "https://cdn.jsdelivr.net/npm/@codemirror/search@6.7.2/dist/index.js",
+    "@codemirror/legacy-modes/mode/go": "https://cdn.jsdelivr.net/npm/@codemirror/legacy-modes@6.5.4/mode/go.js",
+    "@lezer/common": "https://cdn.jsdelivr.net/npm/@lezer/common@1.5.2/dist/index.js",
+    "@lezer/highlight": "https://cdn.jsdelivr.net/npm/@lezer/highlight@1.2.3/dist/index.js",
+    "@lezer/lr": "https://cdn.jsdelivr.net/npm/@lezer/lr@1.4.10/dist/index.js",
+    "style-mod": "https://cdn.jsdelivr.net/npm/style-mod@4.1.4/src/style-mod.js",
+    "w3c-keyname": "https://cdn.jsdelivr.net/npm/w3c-keyname@2.2.8/index.js",
+    "crelt": "https://cdn.jsdelivr.net/npm/crelt@1.0.7/index.js",
+    "@marijn/find-cluster-break": "https://cdn.jsdelivr.net/npm/@marijn/find-cluster-break@1.0.4/src/index.js"
+  }
+}
+</script>
+
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="#/today">drill</a>
+  <nav>
+    <a href="#/today" data-nav="today">Сегодня</a>
+    <a href="#/tasks" data-nav="tasks">Задачи</a>
+    <a href="#/stats" data-nav="stats">Статистика</a>
+    <a href="#/journal" data-nav="journal">Журнал</a>
+  </nav>
+  <span class="spacer"></span>
+  <span id="status" class="status"></span>
+</header>
+
+<main id="view" aria-live="polite"></main>
+
+<script type="module" src="/app.js"></script>
+</body>
+</html>

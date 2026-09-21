@@ -1,0 +1,5 @@
+id: concurrency-01
+title: Параллельный Map с WaitGroup
+topic: concurrency
+difficulty: 2
+estimate_minutes: 10

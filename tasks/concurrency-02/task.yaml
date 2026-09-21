@@ -1,0 +1,5 @@
+id: concurrency-02
+title: select с таймаутом
+topic: concurrency
+difficulty: 2
+estimate_minutes: 10

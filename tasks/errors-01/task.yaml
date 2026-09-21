@@ -1,0 +1,6 @@
+id: errors-01
+title: Свой тип ошибки и wrapping
+topic: errors
+difficulty: 2
+estimate_minutes: 12
+race: false

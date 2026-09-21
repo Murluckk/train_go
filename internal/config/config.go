@@ -45,6 +45,11 @@ type Config struct {
 
 	LogLevel  slog.Level
 	LogFormat string // "text" or "json"
+
+	// SkipSelfCheck skips the startup probe that compiles and runs a trivial
+	// package. Only useful when the toolchain is known good and startup
+	// latency matters.
+	SkipSelfCheck bool
 }
 
 const (
@@ -106,6 +111,8 @@ func Parse(args []string, getenv Getenv, out io.Writer) (*Config, error) {
 		"how often the tasks directory is rescanned")
 	fs.DurationVar(&cfg.ShutdownGrace, "shutdown-grace", envDur(getenv, "SHUTDOWN_GRACE", defaultShutdown),
 		"how long to wait for in-flight requests on shutdown")
+	fs.BoolVar(&cfg.SkipSelfCheck, "skip-self-check", envStr(getenv, "SKIP_SELF_CHECK", "") != "",
+		"skip the startup probe that verifies the sandbox can build and run Go")
 	fs.StringVar(&logLevel, "log-level", envStr(getenv, "LOG_LEVEL", "info"),
 		"debug, info, warn or error")
 	fs.StringVar(&logFormat, "log-format", envStr(getenv, "LOG_FORMAT", defaultLogFormat),

@@ -67,6 +67,15 @@ func run(args []string) error {
 	if err != nil {
 		return err
 	}
+	// A broken sandbox makes every submission look like the user's mistake,
+	// so prove it works before serving anything.
+	if !cfg.SkipSelfCheck {
+		started := time.Now()
+		if err := testRunner.SelfCheck(ctx); err != nil {
+			return err
+		}
+		log.Info("runner self-check passed", "took", time.Since(started).Round(time.Millisecond))
+	}
 	log.Info("runner ready", "go", testRunner.GoVersion(), "cache", cfg.CacheDir, "parallel", cfg.MaxParallel)
 
 	cat := catalog.New()

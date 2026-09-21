@@ -1,0 +1,6 @@
+id: json-01
+title: Свой UnmarshalJSON для Duration
+topic: json
+difficulty: 3
+estimate_minutes: 15
+race: false
