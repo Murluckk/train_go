@@ -1,6 +1,6 @@
 /* One stylesheet, no build step, no framework. */
 :root {
-  color-scheme: light dark;
+  color-scheme: light;
   --bg: #fbfbfa;
   --panel: #ffffff;
   --border: #e2e0db;
@@ -14,22 +14,6 @@
   --amber-soft: #fbf2df;
   --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
   --sans: ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #16181a;
-    --panel: #1e2124;
-    --border: #32373b;
-    --text: #e6e4e0;
-    --muted: #9a9790;
-    --accent: #6fbf94;
-    --accent-soft: #1d2f26;
-    --red: #e88c82;
-    --red-soft: #33211f;
-    --amber: #dcb463;
-    --amber-soft: #302818;
-  }
 }
 
 * { box-sizing: border-box; }
