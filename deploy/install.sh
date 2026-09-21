@@ -19,6 +19,7 @@ die() { printf '\033[1;31merror:\033[0m %s\n' "$*" >&2; exit 1; }
 [[ $EUID -eq 0 ]] || die "run as root"
 [[ -f go.mod && -d cmd/drill ]] || die "run this from the repository root"
 command -v systemctl >/dev/null || die "systemd is required"
+command -v curl >/dev/null || die "curl is required (the script waits for /readyz with it)"
 
 # The runner shells out to the go toolchain for every submission, so the
 # server needs a real Go installation, not just the built binary.
@@ -34,8 +35,12 @@ log "building"
 "$GO_BIN" build -trimpath -o /tmp/drill.new ./cmd/drill
 
 if ! id -u "$USER_NAME" >/dev/null 2>&1; then
+    # The path to nologin differs between distributions.
+    NOLOGIN=/usr/sbin/nologin
+    [[ -x $NOLOGIN ]] || NOLOGIN=/sbin/nologin
+    [[ -x $NOLOGIN ]] || NOLOGIN=/bin/false
     log "creating the $USER_NAME service account"
-    useradd --system --shell /usr/sbin/nologin --home-dir /var/lib/drill "$USER_NAME"
+    useradd --system --shell "$NOLOGIN" --home-dir /var/lib/drill "$USER_NAME"
 fi
 
 log "installing into $PREFIX"
